@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "xpncvr.webp.screenshots.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+        "ScreenshotRecorderMixin",
+        "NativeImageMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
