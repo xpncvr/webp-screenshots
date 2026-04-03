@@ -17,8 +17,8 @@
 		"webpscreenshots.mixins.json"
 	],
 	"depends": {
-		"minecraft": "~1.21.10",
-		"java": ">=21"
+		"minecraft": "~26.1",
+		"java": ">=25"
 	},
     "entrypoints": {
       "main": [

@@ -1,5 +1,6 @@
 package xpncvr.webp.screenshots;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -38,7 +40,7 @@ public class Main implements ModInitializer {
 
         if (param.canWriteCompressed()) {
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionType("Lossless"); // Lossy            //param.setCompressionQuality(0.9f);
+            param.setCompressionType("Lossless"); // "Lossy"            //param.setCompressionQuality(0.9f);
         }
 
         Files.createDirectories(path.getParent());
@@ -52,4 +54,37 @@ public class Main implements ModInitializer {
             writer.dispose();
         }
     }
+
+    public static NativeImage fromBufferedImage(BufferedImage image) {
+        NativeImage nativeImage = new NativeImage(image.getWidth(), image.getHeight(), true);
+        image.getRGB(0, 0, image.getWidth(), image.getHeight(), nativeImage.getPixelsABGR(), 0, image.getWidth());
+        return nativeImage;
+    }
+
+    public static NativeImage decodeWebp(ByteBuffer buffer) throws IOException {
+        ByteBuffer dup = buffer.asReadOnlyBuffer();
+        dup.rewind();
+
+        byte[] bytes = new byte[dup.remaining()];
+        dup.get(bytes);
+
+        try (java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes)) {
+            BufferedImage image = ImageIO.read(bais);
+            if (image == null) {
+                throw new IOException("Failed to decode WebP image");
+            }
+
+            int width = image.getWidth();
+            int height = image.getHeight();
+
+
+            NativeImage nativeImage = new NativeImage(width, height, true);
+            image.getRGB(0, 0, width, height, nativeImage.getPixelsABGR(), 0, width);
+
+
+            return nativeImage;
+        }
+    }
+
+
 }
